@@ -26,13 +26,28 @@ def obtain_parse_wiki_snp500_past():
     
     # Use pandas to downlaod list of snp500 
     # companies into a dataframe
+    snp500_df = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
+    snp500_past_df = snp500_df[1].copy()
+    snp500_past_df.drop(columns=['Reason', 'Date', 'Added'], level=0,
+                        axis=1,
+                        inplace=True)
+    snp500_past_df.columns = snp500_past_df.columns.map(''.join).str.strip('')                    
+
+    # Add instrument, currency and datetime to DataFrame.
+    snp500_past_df.insert(loc=1, column="instrument", value="stock")
     
+    snp500_past_df['currency'], snp500_past_df['current_constituent'], \
+        snp500_past_df['created'], snp500_past_df['last_updated'] = ['USD', 'false', now, now]
 
+    # Create a list from the values
+    # in the dataframe
+    symbols = snp500_past_df.values.tolist()
+    symbols = [tuple(stock) for stock in symbols]
 
-df = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
-df[1]
+    return symbols
 
-df_past_snp500=df[1].copy()
-df_past_snp500.drop(columns=['Reason'],axis=1,inplace=True)
+if __name__ == "__main__":
+    symbols = obtain_parse_wiki_snp500_past()
+    insert_snp500_symbols(symbols)
+    print(f"{len(symbols)} symbols were successfully added.")
 
-print(df_past_snp500)
