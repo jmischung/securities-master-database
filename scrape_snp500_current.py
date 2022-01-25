@@ -1,13 +1,8 @@
 # scrape_snp500_current.py
 
 # Imports
-import os
 from datetime import datetime as dt
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
-import psycopg2
-from dotenv import load_dotenv
 
 # scrape and parse snp500 current constituents table
 def obtain_parse_wiki_snp500_current():
