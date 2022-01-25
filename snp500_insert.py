@@ -16,7 +16,7 @@ def insert_snp500_symbols(symbols):
         The list of values comprised of ticker, instrument, name,
         sector, currency, current_constituent, created, and last_updated
     """
-    
+
     # connect to securities master db
     load_dotenv()
     db_host = os.getenv('UW_SEC_MASTER_HOST')
@@ -34,3 +34,17 @@ def insert_snp500_symbols(symbols):
     )
 
     cur = conn.cursor()
+
+    # Create insert string
+    fields = "(ticker, instrument, name, sector, currency, current_constituent, created_date, last_updated)"
+    records_list_template = ','.join(['%s'] * len(symbols))
+    sql_insert = "INSERT INTO symbol {} VALUES {}".format(fields, records_list_template)
+
+    # Insert records into securities master db
+    cur.execute(sql_insert, symbols)
+    conn.commit()
+
+    # Close db connection
+    cur.close()
+    conn.close()
+    
