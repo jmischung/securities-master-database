@@ -3,6 +3,7 @@
 # Imports
 from datetime import datetime as dt
 import pandas as pd
+from snp500_insert import insert_snp500_symbols
 
 # scrape and parse snp500 current constituents table
 def obtain_parse_wiki_snp500_current():
@@ -44,5 +45,11 @@ def obtain_parse_wiki_snp500_current():
     # Create a list from the values
     # in the dataframe
     symbols = snp500_current_df.values.tolist()
+    symbols = [tuple(stock) for stock in symbols]
 
     return symbols
+
+if __name__ == "__main__":
+    symbols = obtain_parse_wiki_snp500_current()
+    insert_snp500_symbols(symbols)
+    print(f"{len(symbols)} symbols were successfully added.")
