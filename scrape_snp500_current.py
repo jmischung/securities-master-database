@@ -32,7 +32,7 @@ def obtain_parse_wiki_snp500_current():
                                     'Headquarters Location', 
                                     'CIK', 
                                     'Founded',
-                                    'Date first added'],
+                                    'Date first added'], 
                             axis=1,
                             inplace=True)
 
