@@ -31,12 +31,13 @@ def obtain_parse_wiki_snp500_past():
     snp500_past_df.drop(columns=['Reason', 'Date', 'Added'], level=0,
                         axis=1,
                         inplace=True)
-    snp500_past_df.columns = snp500_past_df.columns.map(''.join).str.strip('')                    
+    snp500_past_df.columns = snp500_past_df.columns.map(''.join).str.strip('')
+    snp500_past_df=snp500_past_df.dropna()                    
 
     # Add instrument, currency and datetime to DataFrame.
     snp500_past_df.insert(loc=1, column="instrument", value="stock")
     snp500_past_df.insert(loc=3, column="sector", value="missing")
-    
+
     snp500_past_df['currency'], snp500_past_df['current_constituent'], \
         snp500_past_df['created'], snp500_past_df['last_updated'] = ['USD', 'false', now, now]
 
