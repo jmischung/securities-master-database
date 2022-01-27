@@ -38,3 +38,23 @@ conn = psycopg2.connect(
     port=db_port
 )
 
+# Functions
+# Query Securities Master for tickers
+def obtain_list_of_db_tickers():
+    """Obtain list of ticker symbols in Securities Master database.
+    
+    Returns
+    -------
+    'list'
+        The list of tuples consisting of the ticker symbols and indecies
+        from the `symbol` table in Securities Master database
+    """
+    
+    # Query symbol table
+    cur = conn.cursor()
+    cur.execute("SELECT id, ticker FROM symbol")
+    conn.commit()
+    data = cur.fetchall()
+    cur.close()
+    
+    return [(d[0], d[1]) for d in data]
