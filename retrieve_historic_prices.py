@@ -58,3 +58,26 @@ def obtain_list_of_db_tickers():
     cur.close()
     
     return [(d[0], d[1]) for d in data]
+
+# Call AlphaVantage API
+def construct_alpha_vantage_symbol_call(ticker):
+    """Construct the full API call to AlphaVantage based on the user
+    provided API key and the desired ticker symbol.
+    
+    Parameters
+    ----------
+    ticker : 'str'
+        The ticker to be passed to the API call
+    
+    Returns
+    -------
+    'str'
+            The full API call for a ticker time series
+    """
+    
+    return "{}/{}&symbol={}&outputsize=full&apikey={}".format(
+        ALPHA_VANTAGE_BASE_URL,
+        ALPHA_VANTAGE_TIME_SERIES_CALL,
+        ticker,
+        ALPHA_VANTAGE_API_KEY
+    )
