@@ -134,3 +134,41 @@ def get_daily_historic_data_alphavantage(ticker):
             )
     
     return prices
+
+
+# Insert stock prices into securities master database
+def insert_daily_data_into_db(data_vendor_id, symbol_id, daily_data):
+    """Takes a list of tuples consisting of daily data and adds it to
+    the Securities Master database. Appends the vendor ID and symbol
+    ID to the data.
+    
+    Parameters
+    ----------
+    data_vendor_id : ''
+        lorem ipsm
+    symbol_vendor_id : ''
+        lorem ipsm
+    daily_data : ''
+        lorem ipsm
+    """
+    
+    now = dt.utcnow()
+    
+    # Amend data to include vendor ID and symbol ID
+    daily_data = [(data_vendor_id, symbol_id, d[0], now, now, d[1], d[2],
+                   d[3], d[4], d[5]) for d in daily_data]
+    
+    # Create insert string
+    fields = (
+        "data_vendor_id, symbol_id, price_date, created_date, "
+        "last_updated, open_price, high_price, low_price, "
+        "close_price, volume"
+    )
+    records_list_template = ','.join(['%s'] * len(daily_data))
+    sql_insert = "INSERT INTO daily_price ({}) VALUES {}".format(fields, records_list_template)
+    
+    # Insert records into securities master db
+    cur = conn.cursor()
+    cur.execute(sql_insert, daily_data)
+    conn.commit()
+    cur.close()
