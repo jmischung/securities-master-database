@@ -38,6 +38,7 @@ conn = psycopg2.connect(
     port=db_port
 )
 
+
 # Functions
 # Query Securities Master for tickers
 def obtain_list_of_db_tickers():
@@ -58,6 +59,7 @@ def obtain_list_of_db_tickers():
     cur.close()
     
     return [(d[0], d[1]) for d in data]
+
 
 # Call AlphaVantage API
 def construct_alpha_vantage_symbol_call(ticker):
@@ -81,3 +83,54 @@ def construct_alpha_vantage_symbol_call(ticker):
         ticker,
         ALPHA_VANTAGE_API_KEY
     )
+
+
+    # Get price data for ticker
+def get_daily_historic_data_alphavantage(ticker):
+    """Use the generated API call to query AlphaVantage with the
+    appropriate API key and return a list of price tuples
+    for a particular ticker.
+
+    Parameters
+    ----------
+    ticker : 'str'
+        The ticker symbol, e.g. 'AAPL'
+    start_date : 'datetime'
+        The starting date to obtain pricing for
+    end_date : 'datetime'
+        The ending date to obtain pricing for
+
+    Returns
+    -------
+    'list'
+        The list of tuples comprised of OHLCV prices and volumes
+    """
+    
+    # Query url
+    av_url = construct_alpha_vantage_symbol_call(ticker.replace('.', '-'))
+    
+    try:
+        av_data_js = requests.get(av_url)
+        data = json.loads(av_data_js.text)['Time Series (Daily)']
+    except Exception as e:
+        print("""
+            Could not download AlphaVantage data for {} ticker 
+            ({})...stopping.
+        """.format(ticker, e))
+        return []
+    else:
+        prices = []
+        for date_str in sorted(data.keys()):
+            bar = data[date_str]
+            prices.append(
+                (
+                    dt.strptime(date_str, '%Y-%m-%d'),
+                    float(bar['1. open']),
+                    float(bar['2. high']),
+                    float(bar['3. low']),
+                    float(bar['4. close']),
+                    int(bar['5. volume'])
+                )
+            )
+    
+    return prices
