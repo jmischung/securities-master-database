@@ -172,3 +172,26 @@ def insert_daily_data_into_db(data_vendor_id, symbol_id, daily_data):
     cur.execute(sql_insert, daily_data)
     conn.commit()
     cur.close()
+
+
+if __name__ == "__main__":
+    # This ignores the warnings regarding Data Truncation
+    # from the AlphaVantage precision to Number(19,4) datatypes
+    warnings.filterwarnings('ignore')
+
+    # Loop over the tickers and insert the daily historical
+    # data into Securities Master database
+    tickers = obtain_list_of_db_tickers() # [:TICKER_COUNT] # Uncomment `[:TICKER_COUNT]` to cap the number of queried tickers.
+    lentickers = len(tickers)
+
+    for i, t in enumerate(tickers):
+        print(
+            f"Adding data for {t[1]}: {i+1} out of {lentickers}"
+        )
+        av_data = get_daily_historic_data_alphavantage(t[1])
+        insert_daily_data_into_db(1, t[0], av_data)
+        time.sleep(WAIT_TIME_IN_SECONDS)
+
+    # Close connection
+    conn.close()
+    print("Successfully added AlphaVantage pricing data to Securities Master database")
