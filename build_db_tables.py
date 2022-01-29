@@ -91,6 +91,37 @@ def create_symbol_table(connection, cursor):
     connection.commit()
 
 
+def create_daily_price_table(connection, cursor):
+    """Create the exchange table to store the details
+    of traded exchanges.
+
+    Parameters
+    ----------
+    connection : 'psycopg2.extensions.connection'
+        The connection object to interact
+        with the database
+    cursor : 'psycopg2.extensions.cursor'
+        The cursor object that accepts SQL
+        commands
+    """
+
+    cursor.execute("""
+    CREATE TABLE daily_price(
+    id SERIAL PRIMARY KEY NOT NULL,
+    data_vendor_id INT NOT NULL REFERENCES data_vendor (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    symbol_id INT NOT NULL REFERENCES symbol (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    price_date DATE NOT NULL,
+    created_date TIMESTAMPTZ NOT NULL,
+    last_updated TIMESTAMPTZ NOT NULL,
+    open_price NUMERIC(19,4) NULL,
+    high_price NUMERIC(19,4) NULL,
+    low_price NUMERIC(19,4) NULL,
+    close_price NUMERIC(19,4) NULL,
+    volume BIGINT NULL
+    )""")
+    connection.commit()
+
+
 if __name__ == "__main__":
     # Connect to the remote database.
     load_dotenv()
@@ -113,7 +144,17 @@ if __name__ == "__main__":
         create_exchange_table,
         create_data_vendor_table,
         create_symbol_table,
+        create_daily_price_table
     ]
 
     for creator in table_creators:
         creator(conn, cur)
+
+    # Close connections to the database
+    cur.close()
+    conn.close()
+    print(
+        "The following tables have successfully been added "
+        "to the Securities Master database:\nexchange"
+        "\ndata_vendor\nsymbol\ndaily_price\n\nScript complete."
+    )
