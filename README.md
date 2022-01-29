@@ -20,11 +20,17 @@ In this section, list all the people who contribute to this project. You might w
 
 - Josh Mischung: [josh@knoasis.io](josh@knoasis.io), [LinkedIn](https://www.linkedin.com/in/joshmischung/)
 
+- Max Acheson: maxacheson@gmail.com, [LinkedIn](https://www.linkedin.com/in/max-acheson-75093a19a/)
+
+- Emily Bertani:
+
+- Ian Pope:
+
 ## License
 
 MIT License
 
-Copyright (c) [2022] [Joshua Mischung]
+Copyright (c) [2022] [Joshua Mischung, Max Acheson, Emily Bertani, Ian Pope]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
