@@ -12,3 +12,15 @@ services:
       - "5432:5432"
     volumes:
       - ${HOME}/postgres_data/:/var/lib/postgresql/data
+  scheduler:
+    image: apache/airflow
+    command: scheduler
+    restart: on-failure
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+
