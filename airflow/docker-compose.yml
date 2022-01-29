@@ -1,0 +1,14 @@
+# docker-compose.yml
+
+version: '3.8'
+services:
+  postgres:
+    image: postgres:13.5
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=8lU3&oXKV5$IAl6zDq2
+      - POSTGRES_DB=airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - ${HOME}/postgres_data/:/var/lib/postgresql/data
