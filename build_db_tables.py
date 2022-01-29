@@ -35,6 +35,32 @@ def create_exchange_table(connection, cursor):
     connection.commit()
 
 
+def create_data_vendor_table(connection, cursor):
+    """Create the exchange table to store the details
+    of traded exchanges.
+
+    Parameters
+    ----------
+    connection : 'psycopg2.extensions.connection'
+        The connection object to interact
+        with the database
+    cursor : 'psycopg2.extensions.cursor'
+        The cursor object that accepts SQL
+        commands
+    """
+
+    cursor.execute("""
+    CREATE TABLE data_vendor(
+    id SERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(64) NOT NULL,
+    website_url VARCHAR(255) NULL,
+    support_email VARCHAR(255) NULL,
+    created_date TIMESTAMPTZ NOT NULL,
+    last_updated TIMESTAMPTZ NOT NULL
+    )""")
+    connection.commit()
+
+
 if __name__ == "__main__":
     # Connect to the remote database.
     load_dotenv()
