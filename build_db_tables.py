@@ -61,6 +61,36 @@ def create_data_vendor_table(connection, cursor):
     connection.commit()
 
 
+def create_symbol_table(connection, cursor):
+    """Create the exchange table to store the details
+    of traded exchanges.
+
+    Parameters
+    ----------
+    connection : 'psycopg2.extensions.connection'
+        The connection object to interact
+        with the database
+    cursor : 'psycopg2.extensions.cursor'
+        The cursor object that accepts SQL
+        commands
+    """
+
+    cursor.execute("""
+    CREATE TABLE symbol(
+    id SERIAL PRIMARY KEY NOT NULL,
+    exchange_id INT NULL REFERENCES exchange (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    ticker VARCHAR(32) NOT NULL,
+    instrument VARCHAR(64) NOT NULL,
+    name VARCHAR(255) NULL,
+    sector VARCHAR(255) NULL,
+    currency VARCHAR(32) NULL,
+    current_constituent BOOLEAN NOT NULL,
+    created_date TIMESTAMPTZ NOT NULL,
+    last_updated TIMESTAMPTZ NOT NULL
+    )""")
+    connection.commit()
+
+
 if __name__ == "__main__":
     # Connect to the remote database.
     load_dotenv()
@@ -79,7 +109,11 @@ if __name__ == "__main__":
     cur = conn.cursor()
 
     # Build the tables in the remote database.
-    table_creators = [create_exchange_table]
+    table_creators = [
+        create_exchange_table,
+        create_data_vendor_table,
+        create_symbol_table,
+    ]
 
     for creator in table_creators:
         creator(conn, cur)
