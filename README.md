@@ -30,7 +30,7 @@ This section should include screenshots, code blocks, or animations explaining h
 
 ## Contributors
 
-- Josh Mischung: [josh@knoasis.io](josh@knoasis.io), [LinkedIn](https://www.linkedin.com/in/joshmischung/)
+- Josh Mischung: josh@knoasis.io, [LinkedIn](https://www.linkedin.com/in/joshmischung/)
 
 - Max Acheson: maxacheson@gmail.com, [LinkedIn](https://www.linkedin.com/in/max-acheson-75093a19a/)
 
