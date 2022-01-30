@@ -27,4 +27,32 @@ ALPACA_API_KEY = os.getenv('ALPACA_API_KEY')
 ALPACA_SECRET_KEY = os.getenv('ALPACA_SECRET_KEY')
 
 
+def get_tickers_from_daily_price(connection):
+    """Get a list of tickers with historic data in the
+    daily_price table of the Securities Master database.
 
+    Parameters
+    ----------
+    connection : 'psycopg2.extensions.connection'
+
+    Returns
+    -------
+    'list'
+        The list of tuples consisting of the ticker symbols and indicies
+        from the daily_price table in Securities Master database
+    """
+
+    # Obtain list of tickers in daily_price.
+    ticker_query = """SELECT DISTINCT dp.symbol_id, s.ticker
+    FROM daily_price AS dp
+    JOIN symbol AS s ON dp.symbol_id = s.id
+    ORDER BY dp.symbol_id"""
+
+    # Query the database.
+    cur = connection.cursor()
+    cur.execute(ticker_query)
+    connection.commit()
+    tickers = cur.fetchall()
+    cur.close()
+
+    return [(ticker[0], ticker[1]) for ticker in tickers]
