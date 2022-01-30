@@ -44,7 +44,7 @@ This section should include screenshots, code blocks, or animations explaining h
 
 - Max Acheson: maxacheson@gmail.com, [LinkedIn](https://www.linkedin.com/in/max-acheson-75093a19a/)
 
-- Emily Bertani: emily.bertani.md@gmail.com [LinkedIn](https://www.linkedin.com/in/emily-bertani-1ab184222/)
+- Emily Bertani: emily.bertani.md@gmail.com, [LinkedIn](https://www.linkedin.com/in/emily-bertani-1ab184222/)
 
 - Ian Pope: iancpope@gmail.com
 
