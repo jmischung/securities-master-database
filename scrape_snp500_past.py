@@ -48,6 +48,7 @@ def obtain_parse_wiki_snp500_past():
 
     return symbols
 
+
 if __name__ == "__main__":
     symbols = obtain_parse_wiki_snp500_past()
     insert_snp500_symbols(symbols)

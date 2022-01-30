@@ -22,7 +22,7 @@ def insert_snp500_symbols(symbols):
     db_host = os.getenv('UW_SEC_MASTER_HOST')
     db_user = os.getenv('UW_SEC_MASTER_USER')
     db_pass = os.getenv('UW_SEC_MASTER_PASSWORD')
-    db_name = 'dev_sec_master'
+    db_name = 'securities_master'
     db_port = '5432'
 
     conn = psycopg2.connect(
