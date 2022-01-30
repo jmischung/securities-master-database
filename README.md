@@ -6,11 +6,11 @@ This project constructs a robust securities data warehouse containing 20 years o
 
 The project utilizes python 3.7 along with the following packages:
 
-[pandas](https://pandas.pydata.org/)
+[pandas](https://pandas.pydata.org/) - Python software library for data manipulation.
 
-[requests](https://pypi.org/project/requests/)
+[requests](https://pypi.org/project/requests/) - Python library that makes HTTP requests simpler. 
 
-[psycopg2](https://pypi.org/project/psycopg2/)
+[psycopg2](https://pypi.org/project/psycopg2/) - PostgreSQL database adaptor for Python. 
 
 Other technologies that were utilized within this project are listed here:
 
