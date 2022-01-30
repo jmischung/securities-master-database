@@ -34,6 +34,7 @@ def get_tickers_from_daily_price(connection):
     Parameters
     ----------
     connection : 'psycopg2.extensions.connection'
+        A Python connection to a PostgreSQL database.
 
     Returns
     -------
@@ -145,12 +146,59 @@ def get_prior_day_price_data(ticker, date):
 
     # Get the prior days price data as
     # a pandas dataframe.
-    yesterday = date.today() - timedelta(days=2)
     price_data_df = alpaca.get_bars(
         ticker[1],
         TimeFrame.Day,
-        start=yesterday,
-        end=yesterday
+        start=date,
+        end=date
     ).df
 
     return format_dataframe(price_data_df, ticker[0])
+
+
+def insert_into_daily_price(connection):
+    """If the NYSE was open the prior day, collect the prior
+    day's price data for all of the stocks with historic price
+    data in the daily_price table and insert the data into
+    the table.
+
+    Parameters
+    ----------
+    connection : 'psycopg2.extensions.connection'
+        A Python connection to a PostgreSQL database.
+    """
+    # Confirm if yesterday was a
+    # valid trading day.
+    nyse = mcal.get_calendar('NYSE')
+    yesterday = date.today() - timedelta(days=1)
+
+    if not nyse.schedule(yesterday, yesterday).index.tolist():
+        print("The NYSE was not open yesterday.")
+        sys.exit()
+    else:
+        # Get the id and ticker symbol from all stocks in
+        # the daily_price table.
+        tickers = get_tickers_from_daily_price(connection=connection)
+
+        # Enter the price data from the prior day into the
+        # daily_price table for each stock.
+        for ticker in tickers:
+            daily_data_df = get_prior_day_price_data(ticker, yesterday)
+            daily_data = [tuple(prices) for prices in daily_data_df.to_numpy()]
+
+            # Create insert string
+            fields = (
+                "data_vendor_id, symbol_id, price_date, created_date, "
+                "last_updated, open_price, high_price, low_price, "
+                "close_price, volume"
+            )
+            records_list_template = ','.join(['%s'] * len(daily_data))
+            sql_insert = "INSERT INTO daily_price ({}) VALUES {}".format(
+                fields,
+                records_list_template
+            )
+
+            # Insert records into securities master db
+            cur = connection.cursor()
+            cur.execute(sql_insert, daily_data)
+            connection.commit()
