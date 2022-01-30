@@ -117,3 +117,40 @@ def format_dataframe(price_data_df, ticker_id):
     insert_df = insert_df[sorted_cols]
 
     return insert_df
+
+
+def get_prior_day_price_data(ticker, date):
+    """Get the prrior day's price data from Alpaca.
+
+    Parameters
+    ----------
+    ticker : 'tuple'
+        The id and ticker symbol, e.g. (23, 'AAPL')
+    date : 'datetime.date'
+        The prior day's date
+
+    Returns
+    -------
+    'pandas.DataFrame'
+        A dataframe of the prior day's price data that
+        matches the schema of the daily_price table
+    """
+
+    # Create the Alpaca API object.
+    alpaca = tradeapi.REST(
+        ALPACA_API_KEY,
+        ALPACA_SECRET_KEY,
+        api_version='v2'
+    )
+
+    # Get the prior days price data as
+    # a pandas dataframe.
+    yesterday = date.today() - timedelta(days=2)
+    price_data_df = alpaca.get_bars(
+        ticker[1],
+        TimeFrame.Day,
+        start=yesterday,
+        end=yesterday
+    ).df
+
+    return format_dataframe(price_data_df, ticker[0])
