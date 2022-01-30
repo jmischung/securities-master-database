@@ -24,6 +24,16 @@ Clone the repository to your desired location, and confirm that python 3.7 or gr
 
 `pip install psycopg2`
 
+Other technologies that were utilized within this project are listed here:
+
+[Docker](https://docs.docker.com/) - Platform that offers virtual software packages within unique containers. 
+
+[PostgreSQL](https://www.postgresql.org/) - Open source relational database management system.
+
+[Alpha Vantage](https://www.alphavantage.co/) - API used to gather historical data on financial markets.
+
+[Apache Airflow](https://airflow.apache.org/) - Open source workflow management system for data engineering. 
+
 ## Usage
 
 This section should include screenshots, code blocks, or animations explaining how to use your project.
@@ -34,7 +44,7 @@ This section should include screenshots, code blocks, or animations explaining h
 
 - Max Acheson: maxacheson@gmail.com, [LinkedIn](https://www.linkedin.com/in/max-acheson-75093a19a/)
 
-- Emily Bertani: emily.bertani.md@gmail.com
+- Emily Bertani: emily.bertani.md@gmail.com [LinkedIn](https://www.linkedin.com/in/emily-bertani-1ab184222/)
 
 - Ian Pope: iancpope@gmail.com
 
