@@ -3,6 +3,7 @@
 # imports
 from datetime import datetime as dt
 from dotenv import load_dotenv
+from utils.fileio import save_csv
 import os
 import json
 import time
@@ -21,7 +22,7 @@ ALPHA_VANTAGE_TIME_SERIES_CALL = 'query?function=TIME_SERIES_DAILY'
 
 # Script operation
 TICKER_COUNT = 10  # Change this to adjust number of downloads, 505 records in `symbol` table as of 2021-09-02
-WAIT_TIME_IN_SECONDS = 5.0  # Adjust how frequently the API is called
+WAIT_TIME_IN_SECONDS = 15.0  # Adjust how frequently the API is called
 
 # Connect to securities master db
 db_host = os.getenv('UW_SEC_MASTER_HOST')
@@ -184,13 +185,32 @@ if __name__ == "__main__":
     tickers = obtain_list_of_db_tickers() # [:TICKER_COUNT] # Uncomment `[:TICKER_COUNT]` to cap the number of queried tickers.
     lentickers = len(tickers)
 
+    # Store tickers that failed.
+    failed_tickers = []
+
     for i, t in enumerate(tickers):
         print(
             f"Adding data for {t[1]}: {i+1} out of {lentickers}"
         )
-        av_data = get_daily_historic_data_alphavantage(t[1])
-        insert_daily_data_into_db(1, t[0], av_data)
+        try:
+            av_data = get_daily_historic_data_alphavantage(t[1])
+            insert_daily_data_into_db(1, t[0], av_data)
+        except Exception as err:
+            # Rollback the previous transaction before starting another
+            conn.rollback()
+            failed_tickers.append(t)
         time.sleep(WAIT_TIME_IN_SECONDS)
+
+    # If any tickers failed write the tickers to
+    # a csv file and print them to the terminal.
+    if failed_tickers:
+        save_csv(failed_tickers)
+        print(
+            "The following tickers generated and error:\n"
+            f"{failed_tickers}"
+            "\nA csv file with the failed tickers has been "
+            "saved to this directory."
+        )
 
     # Close connection
     conn.close()
