@@ -12,6 +12,16 @@ The project utilizes python 3.7 along with the following packages:
 
 [psycopg2](https://pypi.org/project/psycopg2/)
 
+Other technologies that were utilized within this project are listed here:
+
+[Docker](https://docs.docker.com/) - Platform that offers virtual software packages within unique containers. 
+
+[PostgreSQL](https://www.postgresql.org/) - Open source relational database management system.
+
+[Alpha Vantage](https://www.alphavantage.co/) - API used to gather historical data on financial markets.
+
+[Apache Airflow](https://airflow.apache.org/) - Open source workflow management system for data engineering. 
+
 
 
 ## Installation Guide
@@ -23,16 +33,6 @@ Clone the repository to your desired location, and confirm that python 3.7 or gr
 `pip install requests`
 
 `pip install psycopg2`
-
-Other technologies that were utilized within this project are listed here:
-
-[Docker](https://docs.docker.com/) - Platform that offers virtual software packages within unique containers. 
-
-[PostgreSQL](https://www.postgresql.org/) - Open source relational database management system.
-
-[Alpha Vantage](https://www.alphavantage.co/) - API used to gather historical data on financial markets.
-
-[Apache Airflow](https://airflow.apache.org/) - Open source workflow management system for data engineering. 
 
 ## Usage
 
