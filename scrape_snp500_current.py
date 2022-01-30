@@ -5,6 +5,7 @@ from datetime import datetime as dt
 import pandas as pd
 from snp500_insert import insert_snp500_symbols
 
+
 # scrape and parse snp500 current constituents table
 def obtain_parse_wiki_snp500_current():
     """Download and parse the Wikipedia list of current
@@ -48,6 +49,7 @@ def obtain_parse_wiki_snp500_current():
     symbols = [tuple(stock) for stock in symbols]
 
     return symbols
+
 
 if __name__ == "__main__":
     symbols = obtain_parse_wiki_snp500_current()
