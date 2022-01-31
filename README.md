@@ -6,11 +6,21 @@ This project constructs a robust securities data warehouse containing 20 years o
 
 The project utilizes python 3.7 along with the following packages:
 
-[pandas](https://pandas.pydata.org/)
+[pandas](https://pandas.pydata.org/) - Python software library for data manipulation.
 
-[requests](https://pypi.org/project/requests/)
+[requests](https://pypi.org/project/requests/) - Python library that makes HTTP requests simpler. 
 
-[psycopg2](https://pypi.org/project/psycopg2/)
+[psycopg2](https://pypi.org/project/psycopg2/) - PostgreSQL database adaptor for Python. 
+
+Other technologies that were utilized within this project are listed here:
+
+[Docker](https://docs.docker.com/) - Platform that offers virtual software packages within unique containers. 
+
+[PostgreSQL](https://www.postgresql.org/) - Open source relational database management system.
+
+[Alpha Vantage](https://www.alphavantage.co/) - API used to gather historical data on financial markets.
+
+[Apache Airflow](https://airflow.apache.org/) - Open source workflow management system for data engineering. 
 
 
 
@@ -30,11 +40,11 @@ This section should include screenshots, code blocks, or animations explaining h
 
 ## Contributors
 
-- Josh Mischung: josh@knoasis.io, [LinkedIn](https://www.linkedin.com/in/joshmischung/)
+- Josh Mischung: josh@knoasis.io // [LinkedIn](https://www.linkedin.com/in/joshmischung/)
 
-- Max Acheson: maxacheson@gmail.com, [LinkedIn](https://www.linkedin.com/in/max-acheson-75093a19a/)
+- Max Acheson: maxacheson@gmail.com // [LinkedIn](https://www.linkedin.com/in/max-acheson-75093a19a/)
 
-- Emily Bertani: emily.bertani.md@gmail.com
+- Emily Bertani: emily.bertani.md@gmail.com // [LinkedIn](https://www.linkedin.com/in/emily-bertani-1ab184222/)
 
 - Ian Pope: iancpope@gmail.com
 
