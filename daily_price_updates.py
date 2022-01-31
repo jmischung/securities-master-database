@@ -12,19 +12,8 @@ from alpaca_trade_api.rest import TimeFrame
 from datetime import date
 from datetime import timedelta
 from datetime import datetime as dt
+from time import sleep
 from dotenv import load_dotenv
-
-# Set environment variables
-load_dotenv()
-
-# Postgres
-db_host = os.getenv('UW_SEC_MASTER_HOST')
-db_user = os.getenv('UW_SEC_MASTER_USER')
-db_pass = os.getenv('UW_SEC_MASTER_PASSWORD')
-
-# Alpaca
-ALPACA_API_KEY = os.getenv('ALPACA_API_KEY')
-ALPACA_SECRET_KEY = os.getenv('ALPACA_SECRET_KEY')
 
 
 def get_tickers_from_daily_price(connection):
@@ -95,7 +84,7 @@ def format_dataframe(price_data_df, ticker_id):
 
     # Create a DataFrame with the additional columns to be added
     additional_cols_df = pd.DataFrame({
-        'data_vendor_id': [1],
+        'data_vendor_id': [2],
         'symbol_id': [ticker_id],
         'created_date': [dt.now()],
         'last_updated': [dt.now()]
@@ -120,8 +109,8 @@ def format_dataframe(price_data_df, ticker_id):
     return insert_df
 
 
-def get_prior_day_price_data(ticker, date):
-    """Get the prrior day's price data from Alpaca.
+def get_prior_day_price_data(ticker, date, alpaca):
+    """Get the prior day's price data from Alpaca.
 
     Parameters
     ----------
@@ -129,6 +118,9 @@ def get_prior_day_price_data(ticker, date):
         The id and ticker symbol, e.g. (23, 'AAPL')
     date : 'datetime.date'
         The prior day's date
+    alpaca : 'alpaca_trade_api.rest.REST'
+        An instantiation of the Alpaca REST API
+        from the SDK.
 
     Returns
     -------
@@ -136,13 +128,6 @@ def get_prior_day_price_data(ticker, date):
         A dataframe of the prior day's price data that
         matches the schema of the daily_price table
     """
-
-    # Create the Alpaca API object.
-    alpaca = tradeapi.REST(
-        ALPACA_API_KEY,
-        ALPACA_SECRET_KEY,
-        api_version='v2'
-    )
 
     # Get the prior days price data as
     # a pandas dataframe.
@@ -156,7 +141,7 @@ def get_prior_day_price_data(ticker, date):
     return format_dataframe(price_data_df, ticker[0])
 
 
-def insert_into_daily_price(connection):
+def insert_into_daily_price(connection, alpaca):
     """If the NYSE was open the prior day, collect the prior
     day's price data for all of the stocks with historic price
     data in the daily_price table and insert the data into
@@ -166,11 +151,14 @@ def insert_into_daily_price(connection):
     ----------
     connection : 'psycopg2.extensions.connection'
         A Python connection to a PostgreSQL database.
+    alpaca : 'alpaca_trade_api.rest.REST'
+        An instantiation of the Alpaca REST API
+        from the SDK.
     """
     # Confirm if yesterday was a
     # valid trading day.
     nyse = mcal.get_calendar('NYSE')
-    yesterday = date.today() - timedelta(days=1)
+    yesterday = date.today() - timedelta(days=2)
 
     if not nyse.schedule(yesterday, yesterday).index.tolist():
         print("The NYSE was not open yesterday.")
@@ -183,7 +171,7 @@ def insert_into_daily_price(connection):
         # Enter the price data from the prior day into the
         # daily_price table for each stock.
         for ticker in tickers:
-            daily_data_df = get_prior_day_price_data(ticker, yesterday)
+            daily_data_df = get_prior_day_price_data(ticker, yesterday, alpaca)
             daily_data = [tuple(prices) for prices in daily_data_df.to_numpy()]
 
             # Create insert string
@@ -202,3 +190,53 @@ def insert_into_daily_price(connection):
             cur = connection.cursor()
             cur.execute(sql_insert, daily_data)
             connection.commit()
+
+            # Wait several seconds before continuing
+            # to the next element.
+            sleep(5)
+
+        print(
+            "Successfully updated the daily_price table "
+            "with yesterday's price data."
+        )
+
+
+if __name__ == "__main__":
+    # Set environment variables
+    load_dotenv()
+
+    # Postgres
+    db_host = os.getenv('UW_SEC_MASTER_HOST')
+    db_user = os.getenv('UW_SEC_MASTER_USER')
+    db_pass = os.getenv('UW_SEC_MASTER_PASSWORD')
+
+    # Alpaca
+    ALPACA_API_KEY = os.getenv('ALPACA_API_KEY')
+    ALPACA_SECRET_KEY = os.getenv('ALPACA_SECRET_KEY')
+
+    # Establish connection to database.
+    db_name = "dev_sec_master"
+    db_port = "5432"
+
+    conn = psycopg2.connect(
+        database=db_name,
+        user=db_user,
+        password=db_pass,
+        host=db_host,
+        port=db_port
+    )
+
+    # Create the Alpaca API object.
+    alpaca = tradeapi.REST(
+        ALPACA_API_KEY,
+        ALPACA_SECRET_KEY,
+        api_version='v2'
+    )
+
+    # Insert prior day's price data if the NYSE was open
+    insert_into_daily_price(connection=conn, alpaca=alpaca)
+
+    # Close all remote connections
+    alpaca.close()
+    conn.close()
+
