@@ -86,7 +86,7 @@ def construct_alpha_vantage_symbol_call(ticker):
     )
 
 
-    # Get price data for ticker
+# Get price data for ticker
 def get_daily_historic_data_alphavantage(ticker):
     """Use the generated API call to query AlphaVantage with the
     appropriate API key and return a list of price tuples
@@ -145,12 +145,15 @@ def insert_daily_data_into_db(data_vendor_id, symbol_id, daily_data):
     
     Parameters
     ----------
-    data_vendor_id : ''
-        lorem ipsm
-    symbol_vendor_id : ''
-        lorem ipsm
-    daily_data : ''
-        lorem ipsm
+    data_vendor_id : 'int'
+        The id of the data vendor from the
+        data_vendor table
+    symbol_id : 'int'
+        The id of the ticker from the
+        symbol table
+    daily_data : 'list'
+        The list of tuples with daily price data
+        for each ticker
     """
     
     now = dt.utcnow()
@@ -204,7 +207,8 @@ if __name__ == "__main__":
     # If any tickers failed write the tickers to
     # a csv file and print them to the terminal.
     if failed_tickers:
-        save_csv(failed_tickers)
+        filename = 'failed_historic_insert_' + dt.today().strftime('%Y%m%d')
+        save_csv(failed_tickers, filename)
         print(
             "The following tickers generated and error:\n"
             f"{failed_tickers}"
