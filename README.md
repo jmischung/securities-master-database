@@ -6,21 +6,17 @@ This project constructs a robust securities data warehouse containing 20 years o
 
 The project utilizes python 3.7 along with the following packages:
 
-[pandas](https://pandas.pydata.org/) - Python software library for data manipulation.
-
-[requests](https://pypi.org/project/requests/) - Python library that makes HTTP requests simpler. 
-
-[psycopg2](https://pypi.org/project/psycopg2/) - PostgreSQL database adaptor for Python. 
+- [pandas](https://pandas.pydata.org/) - Python software library for data manipulation.
+- [requests](https://pypi.org/project/requests/) - Python library that makes HTTP requests simpler. 
+- [psycopg2](https://pypi.org/project/psycopg2/) - PostgreSQL database adaptor for Python. 
 
 Other technologies that were utilized within this project are listed here:
 
-[Docker](https://docs.docker.com/) - Platform that offers virtual software packages within unique containers. 
-
-[PostgreSQL](https://www.postgresql.org/) - Open source relational database management system.
-
-[Alpha Vantage](https://www.alphavantage.co/) - API used to gather historical data on financial markets.
-
-[Apache Airflow](https://airflow.apache.org/) - Open source workflow management system for data engineering. 
+- [DigitalOcean](https://www.digitalocean.com/) - Cloud hosting service that offers simple, lightweight VPS options.
+- [Docker](https://docs.docker.com/) - Platform that offers virtual software packages within unique containers. 
+- [PostgreSQL](https://www.postgresql.org/) - Open source relational database management system.
+- [Alpha Vantage](https://www.alphavantage.co/) - API used to gather historical data on financial markets.
+- [Alpaca](https://alpaca.markets/) - SDK used to gather prior day's price data on financial markets.
 
 
 
@@ -28,24 +24,51 @@ Other technologies that were utilized within this project are listed here:
 
 Clone the repository to your desired location, and confirm that python 3.7 or greater and the packages listed in the Technologies section are installed.
 
-`pip install pandas`
+```python
+pip install requests
+pip install python-dotenv
+pip install psycopg2
+pip install pandas
+pip install alpaca-trade-api
+pip install pandas-market-calendars
+```
 
-`pip install requests`
+## Getting Started
 
-`pip install psycopg2`
+This project can be set up locally or on a VPS. The authors of this project opted for hosting it on a VPS with DigitalOcean and utitilizing Docker to set up the PostgreSQL database.
 
-## Usage
+To duplicate our set up requires building and configuring a DigitalOcean Droplet, and installing Docker on the Droplet. With Docker installed run `docker pull postgres`. Next, create and start a Docker PostgreSQL container by running the command:
 
-This section should include screenshots, code blocks, or animations explaining how to use your project.
+```sh
+docker run \
+	-p 5432:5432 \  
+	--name container-name \
+	-e POSTGRES_PASSWORD=psql-password \
+	-v ${HOME}/postgres_data/:/var/lib/postgresql/data \
+	-d postgres
+```
+Accessing the PostgreSQL database from the local terminal does require that PostgreSQL be installed on the local machine and `psql` is in the `PATH`. Access the Dockerized database from the terminal by running `psql -h <host ip> -p 5432 -U postgres`. Create the database where you'd like to store the historic price data and the user that will have access to the database.  
+
+Once the database and user have been created in the PostgreSQL Docker Container, create a `.env` in the root directory of this project with database user, password, and host, Alpaca key and secret key, and Alpha Vantage API key. Running the `Python` scripts will require updating the environment variable names in the scripts to the variable names provided in the `.env` file.  
+
+Before running the scripts, in the root directory of the project create a new subdirectory called `failed_inserts`. If any of the `SQL` inserts fail the tickers that failed will be stored in a `csv` file that will be written to this subdirectory.  
+
+The `Python` scripts can now be run in the following order: 
+ 
+1. `build_db_tables.py`  
+2. `scrape_snp500_current.py`
+3. `scrape_snp500_past.py`
+4. `retrieve_historic_prices.py`
+
+Lastly, create a `Cron` job to run `daily_price_updates.py` each night between 1:00 AM to 3:00 AM.  
+
+With this, you've now created your own Securities Master database that is self sustaining and will allow you to run large scale backtest of trading strategies without having to worry about API throttling or loss of access.
 
 ## Contributors
 
 - Josh Mischung: josh@knoasis.io // [LinkedIn](https://www.linkedin.com/in/joshmischung/)
-
 - Max Acheson: maxacheson@gmail.com // [LinkedIn](https://www.linkedin.com/in/max-acheson-75093a19a/)
-
 - Emily Bertani: emily.bertani.md@gmail.com // [LinkedIn](https://www.linkedin.com/in/emily-bertani-1ab184222/)
-
 - Ian Pope: iancpope@gmail.com
 
 ## License
