@@ -14,6 +14,7 @@ from datetime import timedelta
 from datetime import datetime as dt
 from time import sleep
 from dotenv import load_dotenv
+from utils.fileio import save_csv
 
 
 def get_tickers_from_daily_price(connection):
@@ -170,6 +171,8 @@ def insert_into_daily_price(connection, alpaca):
 
         # Enter the price data from the prior day into the
         # daily_price table for each stock.
+        failed_updates = []
+
         for ticker in tickers:
             daily_data_df = get_prior_day_price_data(ticker, yesterday, alpaca)
             daily_data = [tuple(prices) for prices in daily_data_df.to_numpy()]
@@ -186,14 +189,31 @@ def insert_into_daily_price(connection, alpaca):
                 records_list_template
             )
 
-            # Insert records into securities master db
-            cur = connection.cursor()
-            cur.execute(sql_insert, daily_data)
-            connection.commit()
+            try:
+                # Insert records into securities master db
+                cur = connection.cursor()
+                cur.execute(sql_insert, daily_data)
+                connection.commit()
+            except Exception as err:
+                # Rollback the previous transaction before starting another
+                conn.rollback()
+                failed_updates.append(ticker)
 
             # Wait several seconds before continuing
             # to the next element.
             sleep(5)
+
+        # If any tickers failed, write the tickers to
+        # a csv file.
+        if failed_updates:
+            filename = 'failed_updates_' + dt.today().strftime('%Y%m%d')
+            save_csv(failed_updates, filename)
+            print(
+                "One or more tickers failed. They were saved to "
+                "a csv in the failed_inserts directory with the "
+                "file name failed_updates_yyyymmdd.csv"
+            )
+            sys.exit()
 
         print(
             "Successfully updated the daily_price table "
