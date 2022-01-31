@@ -6,19 +6,22 @@ import csv
 from pathlib import Path
 
 
-def save_csv(failed_tickers):
+def save_csv(failed_tickers, filename):
     """
     Save failed tickers as a csv to the directory where the
     app is running.
+
     Parameters
     ----------
     failed_tickers : 'list'
         A list of tickers that generated and error and historic
         price was not entered into the securities master database.
+    filename : 'str'
+        The filename of the csv being saved.
     """
 
     # File name for the qualifying loans CSV.
-    output_path = Path("failed_tickers.csv")
+    output_path = Path(f"failed_inserts/{filename}.csv")
 
     # Save the qualifying loans in the current working directory.
     with open(output_path, 'w', newline='') as csvfile:
