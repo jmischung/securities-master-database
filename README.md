@@ -1,14 +1,28 @@
-# Project Title
+# Securities Master Database
 
-Just after the title, introduce your project by describing attractively what the project is about and what is the main problem that inspires you to create this project or what is the main contribution for the potential user of your project.
+This project constructs a robust securities data warehouse containing 20 years of historical financial data from every S&P500 company. To eliminate recency bias, we have elected to also include all companies that once held a place on the S&P500 but no longer do. Moving forward, an automated script will import new daily figures for each of the 782 companies, thus keeping the database up to date. 
 
 ## Technologies
 
-Describe the technologies required to use your project such as programming languages, libraries, frameworks, and operating systems. Be sure to include the specific versions of any critical dependencies that you have used in the stable version of your project.
+The project utilizes python 3.7 along with the following packages:
+
+[pandas](https://pandas.pydata.org/)
+
+[requests](https://pypi.org/project/requests/)
+
+[psycopg2](https://pypi.org/project/psycopg2/)
+
+
 
 ## Installation Guide
 
-In this section, you should include detailed installation notes containing code blocks and screenshots.
+Clone the repository to your desired location, and confirm that python 3.7 or greater and the packages listed in the Technologies section are installed.
+
+`pip install pandas`
+
+`pip install requests`
+
+`pip install psycopg2`
 
 ## Usage
 
@@ -16,15 +30,19 @@ This section should include screenshots, code blocks, or animations explaining h
 
 ## Contributors
 
-In this section, list all the people who contribute to this project. You might want recruiters or potential collaborators to reach you, so include your contact email and, optionally, your LinkedIn or Twitter profile.  
+- Josh Mischung: josh@knoasis.io, [LinkedIn](https://www.linkedin.com/in/joshmischung/)
 
-- Josh Mischung: [josh@knoasis.io](josh@knoasis.io), [LinkedIn](https://www.linkedin.com/in/joshmischung/)
+- Max Acheson: maxacheson@gmail.com, [LinkedIn](https://www.linkedin.com/in/max-acheson-75093a19a/)
+
+- Emily Bertani: emily.bertani.md@gmail.com
+
+- Ian Pope: iancpope@gmail.com
 
 ## License
 
 MIT License
 
-Copyright (c) [2022] [Joshua Mischung]
+Copyright (c) [2022] [Joshua Mischung, Max Acheson, Emily Bertani, Ian Pope]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
