@@ -143,5 +143,5 @@ cython_debug/
 
 # Misc.
 .DS_Store
-
+failed_inserts/
 # End of https://www.toptal.com/developers/gitignore/api/python
