@@ -159,7 +159,7 @@ def insert_into_daily_price(connection, alpaca):
     # Confirm if yesterday was a
     # valid trading day.
     nyse = mcal.get_calendar('NYSE')
-    yesterday = date.today() - timedelta(days=2)
+    yesterday = date.today() - timedelta(days=1)
 
     if not nyse.schedule(yesterday, yesterday).index.tolist():
         print("The NYSE was not open yesterday.")
