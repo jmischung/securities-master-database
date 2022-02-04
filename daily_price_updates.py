@@ -175,50 +175,55 @@ def insert_into_daily_price(connection, alpaca):
 
         for ticker in tickers:
             daily_data_df = get_prior_day_price_data(ticker, yesterday, alpaca)
-            daily_data = [tuple(prices) for prices in daily_data_df.to_numpy()]
+            # If dataframe is empty proceed to the next ticker.
+            if daily_data_df.empyt:
+                sleep(2)
+                continue
+            else:
+                daily_data = [tuple(prices) for prices in daily_data_df.to_numpy()]
 
-            # Create insert string
-            fields = (
-                "data_vendor_id, symbol_id, price_date, created_date, "
-                "last_updated, open_price, high_price, low_price, "
-                "close_price, volume"
-            )
-            records_list_template = ','.join(['%s'] * len(daily_data))
-            sql_insert = "INSERT INTO daily_price ({}) VALUES {}".format(
-                fields,
-                records_list_template
-            )
+                # Create insert string
+                fields = (
+                    "data_vendor_id, symbol_id, price_date, created_date, "
+                    "last_updated, open_price, high_price, low_price, "
+                    "close_price, volume"
+                )
+                records_list_template = ','.join(['%s'] * len(daily_data))
+                sql_insert = "INSERT INTO daily_price ({}) VALUES {}".format(
+                    fields,
+                    records_list_template
+                )
 
-            try:
-                # Insert records into securities master db
-                cur = connection.cursor()
-                cur.execute(sql_insert, daily_data)
-                connection.commit()
-            except Exception as err:
-                # Rollback the previous transaction before starting another
-                conn.rollback()
-                failed_updates.append(ticker)
+                try:
+                    # Insert records into securities master db
+                    cur = connection.cursor()
+                    cur.execute(sql_insert, daily_data)
+                    connection.commit()
+                except Exception as err:
+                    # Rollback the previous transaction before starting another
+                    conn.rollback()
+                    failed_updates.append(ticker)
 
-            # Wait several seconds before continuing
-            # to the next element.
-            sleep(5)
+                # Wait several seconds before continuing
+                # to the next element.
+                sleep(2)
 
-        # If any tickers failed, write the tickers to
-        # a csv file.
-        if failed_updates:
-            filename = 'failed_updates_' + dt.today().strftime('%Y%m%d')
-            save_csv(failed_updates, filename)
+            # If any tickers failed, write the tickers to
+            # a csv file.
+            if failed_updates:
+                filename = 'failed_updates_' + dt.today().strftime('%Y%m%d')
+                save_csv(failed_updates, filename)
+                print(
+                    "One or more tickers failed. They were saved to "
+                    "a csv in the failed_inserts directory with the "
+                    "file name failed_updates_yyyymmdd.csv"
+                )
+                sys.exit()
+
             print(
-                "One or more tickers failed. They were saved to "
-                "a csv in the failed_inserts directory with the "
-                "file name failed_updates_yyyymmdd.csv"
+                "Successfully updated the daily_price table "
+                "with yesterday's price data."
             )
-            sys.exit()
-
-        print(
-            "Successfully updated the daily_price table "
-            "with yesterday's price data."
-        )
 
 
 if __name__ == "__main__":
