@@ -139,7 +139,11 @@ def get_prior_day_price_data(ticker, date, alpaca):
         end=date
     ).df
 
-    return format_dataframe(price_data_df, ticker[0])
+    # If dataframe is empty skip formatting.
+    if price_data_df.empty:
+        return price_data_df
+    else:
+        return format_dataframe(price_data_df, ticker[0])
 
 
 def insert_into_daily_price(connection, alpaca):
@@ -176,8 +180,8 @@ def insert_into_daily_price(connection, alpaca):
         for ticker in tickers:
             daily_data_df = get_prior_day_price_data(ticker, yesterday, alpaca)
             # If dataframe is empty proceed to the next ticker.
-            if daily_data_df.empyt:
-                sleep(2)
+            if daily_data_df.empty:
+                print(f"An empty dataframe was returned for {ticker}")
                 continue
             else:
                 daily_data = [tuple(prices) for prices in daily_data_df.to_numpy()]
@@ -208,22 +212,22 @@ def insert_into_daily_price(connection, alpaca):
                 # to the next element.
                 sleep(2)
 
-            # If any tickers failed, write the tickers to
-            # a csv file.
-            if failed_updates:
-                filename = 'failed_updates_' + dt.today().strftime('%Y%m%d')
-                save_csv(failed_updates, filename)
-                print(
-                    "One or more tickers failed. They were saved to "
-                    "a csv in the failed_inserts directory with the "
-                    "file name failed_updates_yyyymmdd.csv"
-                )
-                sys.exit()
-
             print(
                 "Successfully updated the daily_price table "
-                "with yesterday's price data."
+                f"for {ticker} with yesterday's price data."
             )
+
+        # If any tickers failed, write the tickers to
+        # a csv file.
+        if failed_updates:
+            filename = 'failed_updates_' + dt.today().strftime('%Y%m%d')
+            save_csv(failed_updates, filename)
+            print(
+                "One or more tickers failed. They were saved to "
+                "a csv in the failed_inserts directory with the "
+                "file name failed_updates_yyyymmdd.csv"
+            )
+            sys.exit()
 
 
 if __name__ == "__main__":
