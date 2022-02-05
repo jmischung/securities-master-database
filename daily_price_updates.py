@@ -15,6 +15,7 @@ from datetime import datetime as dt
 from time import sleep
 from dotenv import load_dotenv
 from utils.fileio import save_csv
+from utils.progress import print_progress_bar
 
 
 def get_tickers_from_daily_price(connection):
@@ -172,16 +173,16 @@ def insert_into_daily_price(connection, alpaca):
         # Get the id and ticker symbol from all stocks in
         # the daily_price table.
         tickers = get_tickers_from_daily_price(connection=connection)
+        num_tickers = len(tickers)
 
         # Enter the price data from the prior day into the
         # daily_price table for each stock.
         failed_updates = []
 
-        for ticker in tickers:
+        for i, ticker in enumerate(tickers):
             daily_data_df = get_prior_day_price_data(ticker, yesterday, alpaca)
             # If dataframe is empty proceed to the next ticker.
             if daily_data_df.empty:
-                print(f"An empty dataframe was returned for {ticker}")
                 continue
             else:
                 daily_data = [tuple(prices) for prices in daily_data_df.to_numpy()]
@@ -212,9 +213,12 @@ def insert_into_daily_price(connection, alpaca):
                 # to the next element.
                 sleep(2)
 
-            print(
-                "Successfully updated the daily_price table "
-                f"for {ticker} with yesterday's price data."
+            print_progress_bar(
+                i + 1,
+                num_tickers,
+                prefix='Progress',
+                suffix='Complete',
+                length=50
             )
 
         # If any tickers failed, write the tickers to
